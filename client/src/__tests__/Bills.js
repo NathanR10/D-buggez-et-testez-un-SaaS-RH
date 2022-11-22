@@ -1,47 +1,47 @@
+/* eslint-disable no-undef */
+/* eslint-disable import/extensions */
 /**
  * @jest-environment jsdom
  */
 
-import { screen, waitFor, fireEvent } from "@testing-library/dom";
-import userEvent from "@testing-library/user-event";
-import BillsUI from "../views/BillsUI.js";
-import Bills from "../containers/Bills.js";
-import { ROUTES, ROUTES_PATH } from "../constants/routes.js";
-import { localStorageMock } from "../__mocks__/localStorage.js";
-import mockStore from "../__mocks__/store";
-import { bills } from "../fixtures/bills.js";
-import router from "../app/Router.js";
-import store from "../__mocks__/store.js";
+import { screen, waitFor, fireEvent } from '@testing-library/dom';
+import BillsUI from '../views/BillsUI.js';
+import Bills from '../containers/Bills.js';
+import { ROUTES_PATH } from '../constants/routes.js';
+import { localStorageMock } from '../__mocks__/localStorage.js';
+import mockStore from '../__mocks__/store';
+import { bills } from '../fixtures/bills.js';
+import router from '../app/Router.js';
 
-describe("Given I am connected as an employee", () => {
-  describe("When I am on Bills Page", () => {
-    test("Then bill icon in vertical layout should be highlighted", async () => {
-      Object.defineProperty(window, "localStorage", {
+describe('Given I am connected as an employee', () => {
+  describe('When I am on Bills Page', () => {
+    test('Then bill icon in vertical layout should be highlighted', async () => {
+      Object.defineProperty(window, 'localStorage', {
         value: localStorageMock,
       });
       window.localStorage.setItem(
-        "user",
+        'user',
         JSON.stringify({
-          type: "Employee",
-        })
+          type: 'Employee',
+        }),
       );
-      const root = document.createElement("div");
-      root.setAttribute("id", "root");
+      const root = document.createElement('div');
+      root.setAttribute('id', 'root');
       document.body.append(root);
       router();
       window.onNavigate(ROUTES_PATH.Bills);
-      await waitFor(() => screen.getByTestId("icon-window"));
-      const windowIcon = screen.getByTestId("icon-window");
-      //to-do write expect expression
-      expect(windowIcon.classList.contains("active-icon")).toBe(true);
+      await waitFor(() => screen.getByTestId('icon-window'));
+      const windowIcon = screen.getByTestId('icon-window');
+      // to-do write expect expression
+      expect(windowIcon.classList.contains('active-icon')).toBe(true);
     });
-    test("Then bills should be ordered from earliest to latest", () => {
+    test('Then bills should be ordered from earliest to latest', () => {
       // genere la page billsUI
       document.body.innerHTML = BillsUI({ data: bills });
       // compare sorted bills
       const dates = screen
         .getAllByText(
-          /^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/i
+          /^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/i,
         )
         .map((a) => a.innerHTML);
       const antiChrono = (a, b) => (a < b ? 1 : -1);
@@ -52,58 +52,58 @@ describe("Given I am connected as an employee", () => {
   });
 });
 
-describe("On new bill button click", () => {
+describe('On new bill button click', () => {
   test("Redirects to 'newBill' page", () => {
-    Object.defineProperty(window, "localStorage", { value: localStorageMock });
+    Object.defineProperty(window, 'localStorage', { value: localStorageMock });
     window.localStorage.setItem(
-      "user",
+      'user',
       JSON.stringify({
-        type: "Employee",
-      })
+        type: 'Employee',
+      }),
     );
-    const root = document.createElement("div");
-    root.setAttribute("id", "root");
+    const root = document.createElement('div');
+    root.setAttribute('id', 'root');
     document.body.append(root);
     router();
     window.onNavigate(ROUTES_PATH.Bills);
-    const newBillButton = screen.getByTestId("btn-new-bill");
+    const newBillButton = screen.getByTestId('btn-new-bill');
     fireEvent.click(newBillButton);
-    expect(window.location.href).toContain("#employee/bill/new");
+    expect(window.location.href).toContain('#employee/bill/new');
   });
 });
 
-describe("On logout button click", () => {
-  test("redirects to the login page", () => {
-    Object.defineProperty(window, "localStorage", { value: localStorageMock });
+describe('On logout button click', () => {
+  test('redirects to the login page', () => {
+    Object.defineProperty(window, 'localStorage', { value: localStorageMock });
     window.localStorage.setItem(
-      "user",
+      'user',
       JSON.stringify({
-        type: "Employee",
-      })
+        type: 'Employee',
+      }),
     );
-    const root = document.createElement("div");
-    root.setAttribute("id", "root");
+    const root = document.createElement('div');
+    root.setAttribute('id', 'root');
     document.body.append(root);
     router();
     window.onNavigate(ROUTES_PATH.Bills);
-    const logoutButton = screen.getByTestId("layout-disconnect");
+    const logoutButton = screen.getByTestId('layout-disconnect');
     fireEvent.click(logoutButton);
-    expect(window.location.pathname).toBe("/");
+    expect(window.location.pathname).toBe('/');
   });
 });
 
-describe("Eye icon click", () => {
-  test("Event listener is called", async () => {
-    Object.defineProperty(window, "localStorage", { value: localStorageMock });
+describe('Eye icon click', () => {
+  test('Event listener is called', async () => {
+    Object.defineProperty(window, 'localStorage', { value: localStorageMock });
     window.localStorage.setItem(
-      "user",
+      'user',
       JSON.stringify({
-        type: "Employee",
-      })
+        type: 'Employee',
+      }),
     );
 
-    const root = document.createElement("div");
-    root.setAttribute("id", "root");
+    const root = document.createElement('div');
+    root.setAttribute('id', 'root');
     document.body.append(root);
     router();
     window.onNavigate(ROUTES_PATH.Bills);
@@ -117,7 +117,7 @@ describe("Eye icon click", () => {
 
     const handleClickIconEye = jest.fn();
     billsContainer.handleClickIconEye = handleClickIconEye;
-    const eye = screen.getAllByTestId("icon-eye")[0];
+    const eye = screen.getAllByTestId('icon-eye')[0];
 
     fireEvent.click(eye);
 
@@ -125,14 +125,14 @@ describe("Eye icon click", () => {
   });
 });
 
-describe("Bills Unit Test Suites", () => {
-  it("getBills function should return something", async () => {
-    Object.defineProperty(window, "localStorage", { value: localStorageMock });
+describe('Bills Unit Test Suites', () => {
+  it('getBills function should return something', async () => {
+    Object.defineProperty(window, 'localStorage', { value: localStorageMock });
     window.localStorage.setItem(
-      "user",
+      'user',
       JSON.stringify({
-        type: "Employee",
-      })
+        type: 'Employee',
+      }),
     );
 
     const billsContainer = new Bills({
@@ -147,60 +147,52 @@ describe("Bills Unit Test Suites", () => {
 });
 
 // GET integration test
-describe("Given I am a user connected as Employee", () => {
-  describe("When I navigate to Bills", () => {
-    test("fetches bills from mock API GET", async () => {
+describe('Given I am a user connected as Employee', () => {
+  describe('When I navigate to Bills', () => {
+    test('fetches bills from mock API GET', async () => {
       localStorage.setItem(
-        "user",
-        JSON.stringify({ type: "Employee", email: "a@a" })
+        'user',
+        JSON.stringify({ type: 'Employee', email: 'a@a' }),
       );
-      const root = document.createElement("div");
-      root.setAttribute("id", "root");
+      const root = document.createElement('div');
+      root.setAttribute('id', 'root');
       document.body.append(root);
       router();
       window.onNavigate(ROUTES_PATH.Bills);
-      await waitFor(() => screen.getByText("Statut"));
+      await waitFor(() => screen.getByText('Statut'));
     });
-    describe("When an error occurs on API", () => {
+    describe('When an error occurs on API', () => {
       beforeEach(() => {
-        jest.spyOn(mockStore, "bills");
-        Object.defineProperty(window, "localStorage", {
+        jest.spyOn(mockStore, 'bills');
+        Object.defineProperty(window, 'localStorage', {
           value: localStorageMock,
         });
         window.localStorage.setItem(
-          "user",
+          'user',
           JSON.stringify({
-            type: "Employee",
-            email: "a@a",
-          })
+            type: 'Employee',
+            email: 'a@a',
+          }),
         );
-        const root = document.createElement("div");
-        root.setAttribute("id", "root");
+        const root = document.createElement('div');
+        root.setAttribute('id', 'root');
         document.body.appendChild(root);
         router();
       });
-      test("fetches bills from an API, return a 404", async () => {
-        mockStore.bills.mockImplementationOnce(() => {
-          return {
-            list: () => {
-              return Promise.reject(new Error("Erreur 404"));
-            },
-          };
-        });
+      test('fetches bills from an API, return a 404', async () => {
+        mockStore.bills.mockImplementationOnce(() => ({
+          list: () => Promise.reject(new Error('Erreur 404')),
+        }));
         window.onNavigate(ROUTES_PATH.Bills);
         await new Promise(process.nextTick);
         const message = await screen.getByText(/Erreur 404/);
         expect(message).toBeTruthy();
       });
 
-      test("fetches messages from an API, return a 500", async () => {
-        mockStore.bills.mockImplementationOnce(() => {
-          return {
-            list: () => {
-              return Promise.reject(new Error("Erreur 500"));
-            },
-          };
-        });
+      test('fetches messages from an API, return a 500', async () => {
+        mockStore.bills.mockImplementationOnce(() => ({
+          list: () => Promise.reject(new Error('Erreur 500')),
+        }));
 
         window.onNavigate(ROUTES_PATH.Bills);
         await new Promise(process.nextTick);
