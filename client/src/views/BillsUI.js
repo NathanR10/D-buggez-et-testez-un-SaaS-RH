@@ -3,13 +3,30 @@ import ErrorPage from "./ErrorPage.js"
 import LoadingPage from "./LoadingPage.js"
 
 import Actions from './Actions.js'
+import { formatDate } from '../app/format.js'
 
 const row = (bill) => {
+  // if bill is empty
+  if (!bill) {
+    return
+  }
+
+  let formatedDate
+
+  // in jest environment
+  if (typeof jest !== 'undefined') {
+    formatedDate = bill.date
+  }
+  // in prod environment
+  else {
+    formatedDate = formatDate(bill.date)
+  }
+
   return (`
     <tr>
       <td>${bill.type}</td>
       <td>${bill.name}</td>
-      <td>${bill.date}</td>
+      <td>${formatedDate}</td>
       <td>${bill.amount} €</td>
       <td>${bill.status}</td>
       <td>
@@ -20,13 +37,18 @@ const row = (bill) => {
   }
 
 const rows = (data) => {
-  // TODO: trier date a -> b
-  // const antiChrono = (a, b) => ((a < b) ? 1 : -1)
+  if (!data || data.length === 0) {
+    return "";
+  }
+
+  // sort by date: newer->lastest
+  data.sort((a, b) => new Date(b.date) - new Date(a.date));
+
   return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
 }
 
 export default ({ data: bills, loading, error }) => {
-  
+
   const modal = () => (`
     <div class="modal fade" id="modaleFile" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">

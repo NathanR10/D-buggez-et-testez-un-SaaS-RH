@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "test": "NODE_ENV=test sequelize-cli db:migrate && jest test -i tests/user.test.js --watch",
-    "run:dev": "NODE_ENV=development sequelize-cli db:migrate && node server.js",
+    "run:dev": "sequelize-cli db:migrate && node server.js",
     "lint": "eslint ./"
   },
   "dependencies": {
@@ -28,7 +28,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.3",
     "jest": "^27.3.1",
-    "sequelize-cli": "^6.3.0",
+    "sequelize-cli": "^6.6.1",
     "sequelize-fixtures": "^1.2.0",
     "superagent": "^6.1.0",
     "supertest": "^6.1.6"
