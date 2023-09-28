@@ -67,30 +67,30 @@ export default class NewBill {
           noContentType: true
         }
       })
-      .then(({ fileUrl, key }) => {
+      .then(({ filePath, key }) => {
         this.billId = key
-        this.fileUrl = fileUrl
+        this.fileUrl = filePath
         this.fileName = fileName
+
+        const bill = {
+          email,
+          type: e.target.querySelector(`select[data-testid="expense-type"]`).value,
+          name:  e.target.querySelector(`input[data-testid="expense-name"]`).value,
+          amount: parseInt(e.target.querySelector(`input[data-testid="amount"]`).value),
+          date:  e.target.querySelector(`input[data-testid="datepicker"]`).value,
+          vat: e.target.querySelector(`input[data-testid="vat"]`).value,
+          pct: parseInt(e.target.querySelector(`input[data-testid="pct"]`).value) || 20,
+          commentary: e.target.querySelector(`textarea[data-testid="commentary"]`).value,
+          fileUrl: this.fileUrl,
+          fileName: this.fileName,
+          status: 'pending'
+        }
+        this.updateBill(bill)
+        this.onNavigate(ROUTES_PATH['Bills'])
       })
       .catch(error => {
         console.error(error)
       })
-
-    const bill = {
-      email,
-      type: e.target.querySelector(`select[data-testid="expense-type"]`).value,
-      name:  e.target.querySelector(`input[data-testid="expense-name"]`).value,
-      amount: parseInt(e.target.querySelector(`input[data-testid="amount"]`).value),
-      date:  e.target.querySelector(`input[data-testid="datepicker"]`).value,
-      vat: e.target.querySelector(`input[data-testid="vat"]`).value,
-      pct: parseInt(e.target.querySelector(`input[data-testid="pct"]`).value) || 20,
-      commentary: e.target.querySelector(`textarea[data-testid="commentary"]`).value,
-      fileUrl: this.fileUrl,
-      fileName: this.fileName,
-      status: 'pending'
-    }
-    this.updateBill(bill)
-    this.onNavigate(ROUTES_PATH['Bills'])
   }
 
   // not need to cover this function by tests

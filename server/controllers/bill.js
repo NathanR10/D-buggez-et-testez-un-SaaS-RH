@@ -7,9 +7,6 @@ const isPicture = (mimeType) => ['image/jpeg', 'image/jpg', 'image/png', 'image/
 const create = async (req, res) => {
   const { user } = req;
   if (!user) return res.status(401).send({ message: 'user must be authenticated' });
-  console.log('user');
-  console.log('user');
-  console.log(user);
   try {
     const {
       name,

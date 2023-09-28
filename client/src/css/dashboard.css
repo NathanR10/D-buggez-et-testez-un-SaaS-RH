@@ -117,3 +117,6 @@
   cursor: pointer;
 }
 
+.modal-body {
+  overflow: auto;
+}
