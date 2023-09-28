@@ -22,7 +22,8 @@ export const modal = () => (`
   `)
 
 export default (bill) => {
-
+  // check if fileName exist or if fileName have not litteraly null name
+  const fileName = !bill?.fileName || bill?.fileName === 'null' || bill?.fileName === null ? 'Aucune image trouvée' : bill.fileName
   return (`
     <div class="container dashboard-form" data-testid="dashboard-form">
       <div class="row">
@@ -68,7 +69,7 @@ export default (bill) => {
         <div class="col-sm">
           <label for="file" class="bold-label">Justificatif</label>
             <div class='input-field input-flex file-flex'>
-            <span id="file-name-admin">${bill.fileName}</span>
+            <span id="file-name-admin">${fileName}</span>
             <div class='icons-container'>
               <span id="icon-eye-d" data-testid="icon-eye-d" data-bill-url="${bill.fileUrl}"> ${eyeWhite} </span>
             </div>
