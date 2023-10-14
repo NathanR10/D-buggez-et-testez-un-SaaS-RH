@@ -2,16 +2,14 @@
  * @jest-environment jsdom
  */
 
-import "@testing-library/jest-dom/extend-expect";
-import { screen } from "@testing-library/dom"
+import { fireEvent, screen } from "@testing-library/dom"
 import NewBillUI from "../views/NewBillUI.js"
-import { localStorageMock } from "../__mocks__/localStorage.js"
-import Router from "../app/Router.js"
-import { ROUTES_PATH } from "../constants/routes.js"
-import NewBill from "../containers/NewBill.js"
-import { bills } from "../fixtures/bills.js"
-import userEvent from "@testing-library/user-event"
+import NewBill from "../containers/NewBill"
+import { ROUTES_PATH } from "../constants/routes"
+import userEvent from '@testing-library/user-event'
 import mockStore from "../__mocks__/store"
+import router from "../app/Router"
+import { bills } from "../fixtures/bills"
 
 jest.mock("../app/store", () => mockStore)
 
@@ -20,9 +18,9 @@ describe("Given I am connected as an employee", () => {
     beforeEach(() => {
       // for every test
       Object.defineProperty(
-          window,
-          'localStorage',
-          { value: localStorageMock }
+        window,
+        'localStorage',
+        { value: localStorage }
       )
       window.localStorage.setItem('user', JSON.stringify({
         type: 'Employee',
@@ -33,63 +31,102 @@ describe("Given I am connected as an employee", () => {
       const root = document.createElement("div")
       root.setAttribute("id", "root")
       document.body.appendChild(root)
-      Router()
+      router()
 
       document.body.innerHTML = NewBillUI();
       window.onNavigate(ROUTES_PATH.NewBill);
     })
 
-    test("Then in left menu, mail icon should be highlighted",  () => {
+    test("Then in left menu, mail icon should be highlighted", () => {
       const mailIcon = screen.getByTestId('icon-mail')
       expect(mailIcon.className).toEqual('active-icon')
     })
 
-    // test('Create a new Bill on submit', () => {
-    //   // Init page
-    //   const newBill = new NewBill({
-    //     document,
-    //     onNavigate,
-    //     store: mockStore,
-    //     bills: bills,
-    //     localStorage: window.localStorage
-    //   })
+    test('When I change file with a valid one, should be ok', () => {
+      const newBill = new NewBill({ document, onNavigate, store: mockStore, localStorage: window.localStorage })
 
-    //   // insert data
-    //   screen.getAllByTestId('expense-type').value = "Transports"
-    //   screen.getAllByTestId('expense-name').value = "Test"
-    //   screen.getAllByTestId('datepicker').value = "01-01-2000"
-    //   screen.getAllByTestId('amount').value = 200
-    //   screen.getAllByTestId('pct').value = 1
-    //   screen.getAllByTestId('commentary').value = "Test commentary"
+      const handleChangeFile = jest.fn((e) => newBill.handleChangeFile(e))
 
-    //   newBill.fileName = "test.png"
-    //   newBill.fileUrl = "../assets/images/test.png"
+      const fileInput = screen.getByTestId('file')
+      fileInput.addEventListener("change", handleChangeFile)
 
-    //   // Use updateBill & handleSubmit
-    //   newBill.updateBill = jest.fn()
-    //   const handleSubmit = jest.fn((e) => newBill.handleSubmit(e))
+      const file = new File(["test"], "test.png", { type: "image/png" })
+      fireEvent.change(fileInput, {
+        target: {
+          files: [file]
+        }
+      })
 
-    //   // Emulate click handleSubmit
-    //   const form = screen.getByTestId("form-new-bill");
-    //   form.addEventListener("click", handleSubmit);
-    //   userEvent.click(form)
+      expect(handleChangeFile).toHaveBeenCalled()
+      expect(handleChangeFile).toBeTruthy()
+      expect(fileInput.files[0]).toBe(file)
+      expect(fileInput.files).toHaveLength(1)
+    })
 
-    //   expect(handleSubmit).toHaveBeenCalled()
-    //   expect(newBill.updateBill).toHaveBeenCalled()
-    // })
+    // TODO: bellow code don't incrase cover range
+    test('Then All required input are required', () => {
+      let expenseType = screen.getAllByTestId('expense-type')
+      expect(expenseType[0]).toHaveProperty('required')
+      let datePicker = screen.getAllByTestId('datepicker')
+      expect(datePicker[0]).toHaveProperty('required')
+      let amount = screen.getAllByTestId('amount')
+      expect(amount[0]).toHaveProperty('required')
+      let pct = screen.getAllByTestId('pct')
+      expect(pct[0]).toHaveProperty('required')
+      let file = screen.getAllByTestId('file')
+      expect(file[0]).toHaveProperty('required')
+    })
 
-    // // TODO: bellow code don't incrase cover range
-    // test('Then All required input are required', () => {
-    //   let expenseType = screen.getAllByTestId('expense-type')
-    //   expect(expenseType[0]).toHaveProperty('required')
-    //   let datePicker = screen.getAllByTestId('datepicker')
-    //   expect(datePicker[0]).toHaveProperty('required')
-    //   let amount = screen.getAllByTestId('amount')
-    //   expect(amount[0]).toHaveProperty('required')
-    //   let pct = screen.getAllByTestId('pct')
-    //   expect(pct[0]).toHaveProperty('required')
-    //   let file = screen.getAllByTestId('file')
-    //   expect(file[0]).toHaveProperty('required')
-    // })
+    test("Test if file input is valid", () => {
+      const fileInput = screen.getByTestId('file')
+      // screen.debug(fileInput)
+
+      // INSERT FILE
+
+      // TEST IF FILE EXISTE
+
+      // const mockFormData = {
+      //   "expense-type": "Restaurants et bars",
+      //   "expense-name": "Lunch Meeting",
+      //   datepicker: "",
+      //   amount: "200",
+      //   vat: "40",
+      //   pct: "20",
+      //   commentary: "Business discussion",
+      //   file: new File(["file-content"], "file.jpg", { type: "image/jpeg" }),
+      // };
+
+      // const querySelectorMock = (selector) => {
+      //   const key = selector.match(/\[data-testid="([^"]+)"\]/)[1];
+      //   return { value: mockFormData[key] };
+      // };
+
+      // const html = NewBillUI();
+      // document.body.innerHTML = html;
+
+      // const onNavigate = jest.fn();
+      // const localStorage = window.localStorage;
+      // const newBill = new NewBill({
+      //   document,
+      //   onNavigate,
+      //   store: null,
+      //   localStorage,
+      // });
+
+      // const form = screen.getByTestId("form-new-bill");
+
+      // newBill.handleSubmitTest = jest.fn(newBill.handleSubmit);
+
+      // newBill.handleSubmitTest({
+      //   preventDefault: () => {},
+      //   target: {
+      //     elements: mockFormData,
+      //     querySelector: querySelectorMock,
+      //   },
+      // });
+
+      // expect(newBill.handleSubmitTest).toHaveBeenCalled();
+      // expect(form.checkValidity()).toBe(false);
+    })
   })
 })
