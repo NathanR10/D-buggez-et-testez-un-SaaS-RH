@@ -27,12 +27,11 @@ export default class NewBill {
 
     if (!file) {
       // no file ? do nothing
-      return
+      return {succes: false, error: 'empty file(s)'}
     }
 
     // whitelist file extention
-    const filePath = e.target.value.split(/\\/g)
-    const fileName = filePath[filePath.length - 1]
+    const fileName = file.name
     const validExtensions = ['png', 'gif', 'jpeg', 'jpg']
     const fileExtension = fileName.split('.').pop().toLowerCase()
 
@@ -47,12 +46,23 @@ export default class NewBill {
   handleSubmit = e => {
     e.preventDefault()
 
-    const file = this.document.querySelector(`input[data-testid="file"]`)
-      .files[0];
-    const filePath = file.name.split(/\\/g);
-    const fileName = filePath[filePath.length - 1];
+    const files = this.document.querySelector(`input[data-testid="file"]`)
+      .files;
+    if(files.length === 0) {
+      return {succes: false, error: 'invalide or empty file(s)'}
+    }
+    const file = files[0];
+    const fileName = file.name
     let fileExtension = fileName.split(".");
     fileExtension = fileExtension[1];
+
+    // verify extension format
+    const validExtensions = ['png', 'gif', 'jpeg', 'jpg'];
+
+    if (validExtensions.indexOf(fileExtension.toLowerCase()) === -1) {
+      return { succes: false, error: 'invalide or empty file(s)' };
+    }
+
     const formData = new FormData();
     const email = JSON.parse(localStorage.getItem("user")).email;
 
@@ -90,7 +100,10 @@ export default class NewBill {
       })
       .catch(error => {
         console.error(error)
+
+        return {succes: false}
       })
+    return {succes: true}
   }
 
   // not need to cover this function by tests
